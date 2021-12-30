@@ -1,4 +1,8 @@
-use anchor_lang::{prelude::*, Discriminator};
+use anchor_lang::prelude::*;
+pub mod context;
+pub use crate::context::*;
+pub mod state;
+pub use crate::state::State;
 
 declare_id!("6cDMc7baVfghT4sUx1t3sEfohxXyj4XwDr8pbarQfz1z");
 
@@ -13,28 +17,7 @@ pub mod ratio {
 
         Ok(())
     }
-}
-
-#[derive(Accounts)]
-#[instruction(state_bump: u8)]
-pub struct InitState<'info> {
-    pub system_program: Program<'info, System>,
-    pub rent: Sysvar<'info, Rent>,
-    #[account(mut)]
-    pub authority: Signer<'info>,
-    #[account(
-        init,
-        payer=authority,
-        seeds=[&State::discriminator()[..]],
-        bump=state_bump,
-    )]
-    pub state: Account<'info, State>,
-}
-
-#[account]
-#[derive(Default)]
-pub struct State {
-    pub bump: u8,
-    pub authority: Pubkey,
-    pub last_minted: i64,
+    // pub fn init_pool(ctx: Context<InitPool>) -> ProgramResult {
+    //     Ok(())
+    // }
 }
