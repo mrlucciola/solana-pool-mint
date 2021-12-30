@@ -7,3 +7,11 @@ pub struct State {
     pub authority: Pubkey,
     pub last_minted: i64,
 }
+
+#[account]
+#[derive(Default)]
+pub struct Pool {
+    pub bump: u8,
+    pub pool_currency: Pubkey,
+    pub currency_mint: Pubkey,
+}

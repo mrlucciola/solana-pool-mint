@@ -14,9 +14,8 @@ import {
   TOKEN_PROGRAM_ID,
   ASSOCIATED_TOKEN_PROGRAM_ID,
 } from "@solana/spl-token";
-import { initDeployerAccount } from "./initializeState";
+import { initDeployerAccounts } from "./initializeState";
 export const TOKEN_DECMIALS: number = 8;
-
 interface IgenerateSeedsArr {
   name?: string;
   nameSpace?: string;
@@ -38,7 +37,6 @@ const generateSeedsArr = ({
 
   const seedsArr = [seedDiscriminator];
   otherSeeds && seedsArr.push(...otherSeeds);
-
   return seedsArr;
 };
 
@@ -55,7 +53,6 @@ export const handleTxn = async (
   const resMain: string = await provider_.send(signedTxn);
   const conf: web3.RpcResponseAndContext<web3.SignatureResult> =
     await provider_.connection.confirmTransaction(resMain);
-
   return resMain;
 };
 
@@ -136,11 +133,27 @@ export interface IDeployer {
     pda: web3.PublicKey;
     bump: number;
   };
+  pool: {
+    pda: web3.PublicKey;
+    bump: number;
+    currency: {
+      pda: web3.PublicKey;
+      bump: number;
+    };
+  };
+  currency: {
+    mint: web3.PublicKey;
+    bump: number;
+  };
 }
 
 export interface IUser {
   keypair: web3.Keypair;
   wallet: Wallet;
+  currency: {
+    assoc: web3.PublicKey;
+    bump: number;
+  };
 }
 
 export const initEnvironment = async (provider: Provider, program: Program) => {
@@ -161,22 +174,42 @@ export const initEnvironment = async (provider: Provider, program: Program) => {
   const user1Wallet = new Wallet(user1Keypair);
   const user2Wallet = new Wallet(user2Keypair);
 
-  const { state } = initDeployerAccount(program);
+  const { currency, pool, state } = initDeployerAccounts(program);
+
+  // get the associated accounts for our two users
+  const [user1CurrencyAssoc, user1CurrencyAssocBump] = getAssocTokenAcct(
+    user1Wallet.publicKey,
+    currency.mint
+  );
+  const [user2CurrencyAssoc, user2CurrencyAssocBump] = getAssocTokenAcct(
+    user1Wallet.publicKey,
+    currency.mint
+  );
 
   // combine everything into a single object
   const user1: IUser = {
     keypair: user1Keypair,
     wallet: user1Wallet,
+    currency: {
+      assoc: user1CurrencyAssoc,
+      bump: user1CurrencyAssocBump,
+    },
   };
   const user2: IUser = {
     keypair: user2Keypair,
     wallet: user2Wallet,
+    currency: {
+      assoc: user2CurrencyAssoc,
+      bump: user2CurrencyAssocBump,
+    },
   };
   const deployer: IDeployer = {
     state,
     provider,
     program,
     wallet: provider.wallet as Wallet,
+    pool,
+    currency,
   };
   return { user1, user2, deployer };
 };
