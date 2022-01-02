@@ -1,5 +1,5 @@
 [programs.localnet]
-ratio = "6cDMc7baVfghT4sUx1t3sEfohxXyj4XwDr8pbarQfz1z"
+pool-mint = "6cDMc7baVfghT4sUx1t3sEfohxXyj4XwDr8pbarQfz1z"
 
 [provider]
 cluster = "localnet"

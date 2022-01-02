@@ -1,12 +1,12 @@
 [package]
-name = "ratio"
+name = "pool-mint"
 version = "0.1.0"
-description = "Main Ratio Lib"
+description = "Main pool-mint Lib"
 edition = "2018"
 
 [lib]
 crate-type = ["cdylib", "lib"]
-name = "ratio"
+name = "pool_mint"
 
 [features]
 no-entrypoint = []

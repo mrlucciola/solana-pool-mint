@@ -1,0 +1,21 @@
+[package]
+name = "mint-and-deposit"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+name = "mint_and_deposit"
+
+[features]
+no-entrypoint = []
+no-idl = []
+cpi = ["no-entrypoint"]
+default = []
+
+[dependencies]
+anchor-lang = "0.19.0"
+anchor-spl = "0.19.0"
+spl-token = { version = "3.2",  features = ["no-entrypoint"] }
+spl-associated-token-account = {version = "1.0.3", features = ["no-entrypoint"]}
+pool-mint = { path = "../pool-mint", features = ["cpi"] }
